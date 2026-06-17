@@ -15,6 +15,13 @@ from ui.state import ERROR, LOADING, SUCCESS, init_state, reset_to_idle, set_err
 from utils import normalize_url
 
 
+PANEL_LABELS = {
+    "dashboard": "Dashboard",
+    "seo": "SEO-Details",
+    "history": "Audit-Historie",
+}
+
+
 st.set_page_config(
     page_title="Website Audit Agent",
     page_icon="AI",
@@ -107,70 +114,164 @@ def run_analysis_flow(raw_url: str) -> None:
 def render_success_dashboard(result: dict) -> None:
     components.render_topbar()
 
-    sidebar_col, main_col = st.columns([0.24, 0.76], gap="large")
+    st.session_state.setdefault("dashboard_panel", "dashboard")
+    sidebar_col, main_col = st.columns([0.16, 0.84], gap="large")
     with sidebar_col:
-        components.render_sidebar()
+        render_dashboard_sidebar()
 
     with main_col:
-        header_left, header_right = st.columns([1.4, 1])
-        with header_left:
-            st.markdown(
-                f"""
-                <div class="dashboard-header" style="margin-bottom: 4px;">
-                    <div>
-                        <h1 class="dashboard-title">Ergebnis-Dashboard</h1>
-                        <div class="meta-row">
-                            {components.icon("language")} <span>{result["url"]}</span>
-                            <span>•</span>
-                            {components.icon("calendar_today")} <span>{result["audit_date"]}</span>
-                        </div>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-        with header_right:
-            button_cols = st.columns(3)
-            button_cols[0].button("PDF exportieren", disabled=True, use_container_width=True)
-            button_cols[1].button("Audit speichern", disabled=True, use_container_width=True)
-            if button_cols[2].button("Neue Website", type="primary", use_container_width=True):
-                reset_to_idle()
+        panel = st.session_state.get("dashboard_panel", "dashboard")
+        if panel == "seo":
+            render_seo_panel(result)
+        elif panel == "history":
+            render_history_panel(result)
+        else:
+            render_dashboard_overview(result)
+
+
+def render_dashboard_sidebar() -> None:
+    active_panel = st.session_state.get("dashboard_panel", "dashboard")
+    with st.container(border=True):
+        st.markdown(
+            """
+            <div class="nav-title">Audit Agent</div>
+            <div class="nav-subtitle">MVP fuer einzelne Website-Audits</div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        if st.button("Neue Analyse", type="primary", key="nav_new_audit", use_container_width=True):
+            reset_to_idle()
+            st.rerun()
+
+        st.markdown('<div class="nav-section-label">Ansichten</div>', unsafe_allow_html=True)
+        for panel_key, label in PANEL_LABELS.items():
+            button_label = f"> {label}" if active_panel == panel_key else label
+            if st.button(button_label, key=f"nav_{panel_key}", use_container_width=True):
+                st.session_state["dashboard_panel"] = panel_key
                 st.rerun()
 
-        score_col, preview_col = st.columns([0.36, 0.64], gap="large")
-        with score_col:
-            components.render_score_card(
-                score=result["score"],
-                status_label=result["status_label"],
-                summary=result["score_summary"],
-            )
-        with preview_col:
-            preview_mode = st.radio(
-                "Website Preview",
-                ["Desktop", "Mobile"],
-                horizontal=True,
-                label_visibility="collapsed",
-                key="preview_mode",
-            )
-            components.render_preview_header()
-            screenshot = result.get("screenshot_path") if preview_mode == "Desktop" else None
-            if screenshot and Path(screenshot).exists():
-                st.image(screenshot, use_container_width=True)
-            else:
-                components.render_preview_placeholder()
-            components.render_preview_footer()
+        st.markdown(
+            """
+            <div class="nav-hint">
+                In diesem Prototyp sind nur die Funktionen sichtbar, die lokal wirklich nutzbar sind.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
-        lower_left, lower_right = st.columns([0.58, 0.42], gap="large")
-        with lower_left:
-            components.render_checklist(result["checks"])
-        with lower_right:
-            components.render_summary_card("KI-Kurzfazit", result["ai_summary"], "auto_awesome")
-            st.write("")
-            components.render_outreach_card(result["outreach_text"])
-            st.button("Text kopieren", disabled=True, use_container_width=True)
 
-        components.render_recommendations(result["recommendations"])
-        components.render_footer(start=False)
+def render_dashboard_header(result: dict, title: str) -> None:
+    header_left, header_right = st.columns([0.76, 0.24], gap="large")
+    with header_left:
+        st.markdown(
+            f"""
+            <div class="dashboard-header" style="margin-bottom: 4px;">
+                <div>
+                    <h1 class="dashboard-title">{title}</h1>
+                    <div class="meta-row">
+                        {components.icon("language")} <span>{result["url"]}</span>
+                        <span>•</span>
+                        {components.icon("calendar_today")} <span>{result["audit_date"]}</span>
+                    </div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    with header_right:
+        if st.button("Neue Analyse", type="primary", key=f"header_new_audit_{title}", use_container_width=True):
+            reset_to_idle()
+            st.rerun()
+
+
+def render_dashboard_overview(result: dict) -> None:
+    render_dashboard_header(result, "Ergebnis-Dashboard")
+
+    score_col, preview_col = st.columns([0.28, 0.72], gap="large")
+    with score_col:
+        components.render_score_card(
+            score=result["score"],
+            status_label=result["status_label"],
+            summary=result["score_summary"],
+        )
+    with preview_col:
+        render_preview_widget(result)
+
+    lower_left, lower_right = st.columns([0.52, 0.48], gap="large")
+    with lower_left:
+        components.render_checklist(result["checks"])
+    with lower_right:
+        components.render_summary_card("KI-Kurzfazit", result["ai_summary"], "auto_awesome")
+        st.write("")
+        components.render_outreach_card(result["outreach_text"])
+        st.download_button(
+            "Outreach-Text herunterladen",
+            data=result["outreach_text"],
+            file_name="outreach.txt",
+            mime="text/plain",
+            use_container_width=True,
+        )
+
+    components.render_recommendations(result["recommendations"])
+    components.render_footer(start=False)
+
+
+def render_preview_widget(result: dict) -> None:
+    st.markdown(
+        f"""
+        <div class="preview-heading">
+            <div>
+                <h2>Website-Screenshot</h2>
+                <p>Desktop-Aufnahme aus dem letzten Audit</p>
+            </div>
+            <span class="preview-badge">{components.icon("desktop_windows")} Desktop</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    screenshot = result.get("screenshot_path")
+    if screenshot and Path(screenshot).exists():
+        st.image(screenshot, use_container_width=True)
+    else:
+        components.render_preview_placeholder()
+
+
+def render_seo_panel(result: dict) -> None:
+    render_dashboard_header(result, "SEO-Details")
+    passed, warnings, failed = count_check_statuses(result["checks"])
+    metric_cols = st.columns(4)
+    metric_cols[0].metric("Score", f'{result["score"]}/100')
+    metric_cols[1].metric("Bestanden", passed)
+    metric_cols[2].metric("Warnungen", warnings)
+    metric_cols[3].metric("Fehler", failed)
+
+    st.write("")
+    components.render_checklist(result["checks"])
+    components.render_recommendations(result["recommendations"])
+    components.render_footer(start=False)
+
+
+def render_history_panel(result: dict) -> None:
+    render_dashboard_header(result, "Audit-Historie")
+    history = st.session_state.get("audit_history", [])
+    if history:
+        st.dataframe(history, hide_index=True, use_container_width=True)
+    else:
+        st.info("In dieser Session wurde noch kein Audit gespeichert.")
+
+    if st.button("Aktuelles Ergebnis anzeigen", key="history_back_to_dashboard", use_container_width=True):
+        st.session_state["dashboard_panel"] = "dashboard"
+        st.rerun()
+
+    components.render_footer(start=False)
+
+
+def count_check_statuses(checks: list[dict]) -> tuple[int, int, int]:
+    passed = len([item for item in checks if item.get("status") == "passed"])
+    warnings = len([item for item in checks if item.get("status") == "warning"])
+    failed = len([item for item in checks if item.get("status") == "failed"])
+    return passed, warnings, failed
 
 
 def render_error_page() -> None:

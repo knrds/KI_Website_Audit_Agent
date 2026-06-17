@@ -24,11 +24,6 @@ def render_topbar() -> None:
                 <span class="brand-mark">{icon("query_stats")}</span>
                 <span>Website Audit Agent</span>
             </div>
-            <div class="topbar-actions">
-                <span class="icon-button">{icon("notifications")}</span>
-                <span class="icon-button">{icon("settings")}</span>
-                <span class="avatar">{icon("person")}</span>
-            </div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -122,12 +117,10 @@ def render_sidebar() -> None:
         <div class="side-nav">
             <h2>Audit Agent</h2>
             <p>Analytical SEO</p>
-            <div class="primary-pill" style="width: 100%; margin-bottom: 22px;">{icon("add")} New Audit</div>
+            <div class="nav-note">Nutze die Navigation in der linken Spalte fuer die MVP-Funktionen.</div>
             <div class="side-link active">{icon("dashboard")} Dashboard</div>
             <div class="side-link">{icon("history")} Audit History</div>
             <div class="side-link">{icon("query_stats")} SEO Tools</div>
-            <div class="side-link">{icon("compare_arrows")} Competitors</div>
-            <div class="side-link">{icon("settings")} Settings</div>
         </div>
         """,
         unsafe_allow_html=True,

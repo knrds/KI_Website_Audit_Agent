@@ -20,6 +20,7 @@ Bereits umgesetzt:
 - Stitch-inspirierte Streamlit-Oberflaeche mit Custom CSS
 - vier App-Zustaende: Startscreen, Loading-State, Ergebnis-Dashboard und Fehlerseite
 - Demo-Ergebnis mit Mock-Daten fuer schnelle Portfolio-Praesentation
+- funktionierende Dashboard-Navigation fuer Dashboard, SEO-Details und Session-Audit-Historie
 - Playwright-basierter Seitenaufruf im Headless-Browser
 - HTTP-Status und grobe Ladezeitmessung
 - HTML-Auswertung mit BeautifulSoup
@@ -36,13 +37,14 @@ Bereits umgesetzt:
 - bis zu 5 konkrete Verbesserungsvorschlaege mit Prioritaet und Business-Nutzen
 - Ergebnis-Dashboard mit Score, Website Preview, technischer Checkliste,
   KI-Kurzfazit, Outreach-Zusammenfassung und priorisierten Empfehlungen
+- robuste Widget-Farben fuer Browser-Dark-Mode und Desktop-Layouts
 
 Noch nicht umgesetzt:
 
 - PDF-Export
 - mobile Zweitansicht
 - Lighthouse- oder Web-Vitals-Analyse
-- Datenbank, Login, Multi-URL-Crawling oder SaaS-Funktionen
+- Datenbank, Login, Benachrichtigungen, Wettbewerbsanalyse, Multi-URL-Crawling oder SaaS-Funktionen
 
 Die KI-Anbindung ist optional. Ohne `.env` oder API-Key wird automatisch ein
 lokaler regelbasierter Bericht erzeugt, damit das Projekt weiterhin ohne externe
