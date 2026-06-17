@@ -1,366 +1,162 @@
-# KI-gestuetzter Website-Audit-Agent
+# 🤖 KI-gestützter Website-Audit-Agent (Showcase MVP)
 
-Ein kleines, praxisnahes Portfolio-Projekt fuer automatische Website-Audits von
-lokalen Unternehmen. Das Tool nimmt eine einzelne Website-URL entgegen,
-analysiert einfache technische und inhaltliche Kriterien und erstellt daraus
-einen kompakten Audit-Bericht mit Score, Problemen und konkreten Empfehlungen.
+Ein interaktiver Website-Audit-Agent für lokale Unternehmen, der vollautomatisch SEO-Basics, Conversion-Heuristiken und Web-Strukturen analysiert. Das Projekt wurde als sauberes, vorzeigbares Portfolio- und Showcase-Projekt konzipiert, das fortgeschrittene Python-Entwicklung, Browser-Automation (Playwright), HTML-Parsing (BeautifulSoup) und strukturierte KI-Auswertung (OpenAI API & Pydantic) demonstriert.
 
-Das Projekt ist bewusst klein gehalten. Es soll kein vollstaendiges SaaS-Produkt
-sein, sondern eine saubere Demo fuer Python-Entwicklung, Browser-Automation,
-strukturierte Datenmodelle, Website-Analyse und spaetere KI-Auswertung.
+Die Benutzeroberfläche basiert auf Streamlit und wurde mit einem maßgeschneiderten Custom CSS im modernen "Stitch Design"-Stil (Surface-on-Base, minimalistische Karten, interaktive Status-Badges) gestaltet.
 
-## Aktueller Stand
+---
 
-Der aktuelle MVP ist lauffaehig und kann eine einzelne URL pruefen. Die
-Streamlit-Oberflaeche wurde anhand der Stitch-Designs als kompakter
-Audit-Agent-Prototyp umgesetzt.
+## ✨ Features des MVP-Prototyps
 
-Bereits umgesetzt:
+Das Tool bietet eine voll funktionsfähige Ende-zu-Ende-Pipeline für Website-Analysen:
 
-- Stitch-inspirierte Streamlit-Oberflaeche mit Custom CSS
-- vier App-Zustaende: Startscreen, Loading-State, Ergebnis-Dashboard und Fehlerseite
-- Demo-Ergebnis mit Mock-Daten fuer schnelle Portfolio-Praesentation
-- funktionierende Dashboard-Navigation fuer Dashboard, SEO-Details und Session-Audit-Historie
-- Playwright-basierter Seitenaufruf im Headless-Browser
-- HTTP-Status und grobe Ladezeitmessung
-- HTML-Auswertung mit BeautifulSoup
-- Erkennung von Seitentitel, Meta Description und H1
-- strenge Heuristiken fuer Title-/Meta-Qualitaet, Content-Tiefe, lokale SEO-Signale und Conversion
-- Checks fuer starke CTAs, Adresse, Oeffnungszeiten, Trust-Signale, Bewertungen und Leistungsbegriffe
-- Checks fuer Canonical, Noindex, Open Graph, Structured Data, LocalBusiness Schema, interne Links und Bild-Alt-Texte
-- Screenshot der analysierten Website
-- Pydantic-Modelle fuer strukturierte Audit-Daten
-- strenger lokaler SEO- und Conversion-Score von 0 bis 100
-- optionaler KI-Bericht ueber OpenAI API oder kompatible API
-- Validierung der KI-Antwort mit Pydantic
-- automatischer Fallback auf lokalen Bericht, wenn kein API-Key vorhanden ist
-- bis zu 5 konkrete Verbesserungsvorschlaege mit Prioritaet und Business-Nutzen
-- Ergebnis-Dashboard mit Score, Website Preview, technischer Checkliste,
-  KI-Kurzfazit, Outreach-Zusammenfassung und priorisierten Empfehlungen
-- robuste Widget-Farben fuer Browser-Dark-Mode und Desktop-Layouts
+*   **Browser-Automation (Playwright):** Öffnet die Ziel-URL in einem Headless-Chromium-Browser, prüft die Erreichbarkeit, misst die Ladezeit und erstellt ein visuelles Bildschirmfoto (Desktop-Ansicht).
+*   **Heuristisches HTML-Parsing (BeautifulSoup):** Extrahiert und analysiert Seitentitel, Meta Descriptions, H1- und H2-Überschriften, Canonical-Tags, strukturierte Daten (z. B. `LocalBusiness` Schema), Bild-Alt-Attribute und Kontaktinformationen (Telefon, E-Mail, Adresse, Öffnungszeiten).
+*   **Strikte Scoring-Logik (0–100):** Ein transparenter, regelbasierter Score bewertet die SEO-Grundlagen und Conversion-Stärke der Website (z. B. CTA-Vorhandensein, lokale SEO-Signale, Trust-Elemente).
+*   **Strukturierte KI-Analyse (OpenAI API):** Sendet die extrahierten Signale an die OpenAI API und validiert die strukturierte Antwort mittels Pydantic gegen das Datenmodell. Die KI erzeugt:
+    *   Ein prägnantes Kurzfazit.
+    *   5 priorisierte, konkrete Verbesserungsvorschläge (mit Begründung und Business-Nutzen).
+    *   Einen personalisierten Outreach-Entwurf für die Kundenakquise.
+*   **Lokaler Fallback-Modus:** Sollte kein OpenAI-API-Schlüssel konfiguriert sein oder ein Fehler auftreten, generiert die App automatisch einen detaillierten regelbasierten Audit-Bericht. Das Projekt bleibt dadurch jederzeit ohne API-Kosten voll funktionsfähig und präsentabel!
+*   **Modernes Dashboard-UI:**
+    *   **Startscreen:** Übersichtlich mit URL-Eingabe und einem "Demo-Modus" für schnelle Präsentationen.
+    *   **Loading-State:** Ein animierter Stepper visualisiert live den Fortschritt der einzelnen Analysephasen.
+    *   **Ergebnis-Dashboard:** Aufgeteilt in Overview (Score, Screenshot, Checkliste, KI-Fazit, Outreach-Kopie) und eine detaillierte **SEO-Detailansicht** sowie eine lokale **Audit-Historie** (für die aktuelle Session).
+    *   **Fehlerseite:** Fängt blockierte Verbindungen, SSL-Probleme oder Timeouts ab und bietet verständliche Lösungsansätze.
 
-Noch nicht umgesetzt:
+---
 
-- PDF-Export
-- mobile Zweitansicht
-- Lighthouse- oder Web-Vitals-Analyse
-- Datenbank, Login, Benachrichtigungen, Wettbewerbsanalyse, Multi-URL-Crawling oder SaaS-Funktionen
+## 🛠️ Tech-Stack & Architektur
 
-Die KI-Anbindung ist optional. Ohne `.env` oder API-Key wird automatisch ein
-lokaler regelbasierter Bericht erzeugt, damit das Projekt weiterhin ohne externe
-Abhaengigkeiten demo-faehig bleibt.
+Dieses Projekt demonstriert Best Practices in der Python-Entwicklung und Datenverarbeitung:
 
-## Stand nach init.md
+*   **Python 3.11+**
+*   **Streamlit** (UI-Framework & Session-State-Management)
+*   **Playwright** (Headless Browser für Crawling & Screenshots)
+*   **BeautifulSoup4** (HTML-Parsing & Signalextraktion)
+*   **Pydantic v2** (Strenge Datenvalidierung und Typisierung für Signale und KI-Antworten)
+*   **OpenAI SDK** (Strukturierter JSON-Mode für die Berichterstellung)
+*   **Tailored CSS** (Integration eines konsistenten CSS-Designsystems über CSS-Injektion)
 
-Aus dem urspruenglichen Implementierungsplan sind aktuell diese Schritte
-umgesetzt:
+---
 
-1. Projektordner und Setup
-2. Dependencies und Env-Beispiel
-3. Grundstruktur mit Modulen
-4. Playwright-basierter Website-Aufruf
-5. Website-Daten extrahieren
-6. Basischecks fuer Titel, Meta, H1, CTA, Impressum, Datenschutz und Kontakt
-7. Streamlit-UI als Stitch-inspiriertes Dashboard mit Start-, Loading-,
-   Ergebnis- und Fehlerzustand
-8. KI-Bericht mit API-Key-Erkennung, Pydantic-Validierung und lokalem Fallback
-9. Fehlerbehandlung mit eigener Nutzerseite umgesetzt
-10. README und Portfolio-Dokumentation gestartet
-
-Noch offen fuer eine runde Version 1:
-
-- UI-Feinschliff fuer kleinere Viewports weiter ausbauen
-- UI-Fehlertexte weiter polieren
-- optional Demo-Screenshot fuer README/Portfolio erzeugen
-- optional mobilen Screenshot ergaenzen
-
-## Zielgruppe
-
-Das Tool ist fuer einfache Website-Erstchecks gedacht, zum Beispiel fuer:
-
-- lokale Dienstleister
-- Handwerksbetriebe
-- Restaurants, Cafes und kleine Laeden
-- Agentur- oder Freelancer-Demos
-- Portfolio-Projekte bei Bewerbungen
-
-Es ersetzt kein professionelles SEO-, Rechts- oder Performance-Audit. Es zeigt
-aber schnell, ob eine Website grundlegende Signale fuer Vertrauen, Auffindbarkeit
-und Kontaktaufnahme bietet.
-
-## Projektstruktur
+## 📂 Projektstruktur
 
 ```text
-app.py
-audit.py
-ai_report.py
-models.py
-utils.py
-assets/
-  styles.css
-ui/
-  components.py
-  sample_data.py
-  state.py
-requirements.txt
-.env.example
-.gitignore
-README.md
-outputs/
-  screenshots/
-    .gitkeep
-Stitch_Design/
+├── app.py                  # Streamlit-Hauptanwendung (Zustandssteuerung & Routing)
+├── audit.py                # Core-Audit-Modul (Playwright & BeautifulSoup-Parser)
+├── ai_report.py            # KI-Schicht (OpenAI API-Anbindung, Prompting & Fallbacks)
+├── models.py               # Pydantic-Modelle (WebsiteSignals, Recommendation, AuditReport)
+├── utils.py                # Hilfsfunktionen (URL-Normalisierung, sichere Dateinamen)
+├── requirements.txt        # Projekt-Abhängigkeiten
+├── .env.example            # Vorlage für Umgebungsvariablen
+├── .gitignore              # Git-Ausschlussregeln
+├── assets/
+│   └── styles.css          # Custom Stylesheet im modernen Stitch-Design
+├── ui/
+│   ├── __init__.py
+│   ├── components.py       # UI-Komponenten (Karten, Checklisten, Topbar, Ladezustand)
+│   ├── sample_data.py      # Mockdaten für den interaktiven Demo-Modus
+│   └── state.py            # Session-State-Helper für die App-Zustände
+├── outputs/
+│   └── screenshots/        # Speicherort für generierte Screenshots (gitignored)
+└── Stitch_Design/          # Design-Referenzen und Mockups (Entwicklungsverlauf)
 ```
 
-## Dateien
-
-`app.py`
-
-Streamlit-App. Steuert die vier UI-Zustaende, nimmt die URL entgegen, startet
-den Audit und zeigt Score, Checkliste, Screenshot, Kurzfazit, Outreach-Text und
-Empfehlungen an.
-
-`assets/styles.css`
-
-Custom CSS fuer die Stitch-inspirierte Oberflaeche, inklusive Topbar, Startscreen,
-Loading-State, Dashboard-Karten, Fehlerseite und responsive Anpassungen.
-
-`ui/`
-
-Kleine UI-Schicht mit wiederverwendbaren Komponenten, Session-State-Helfern und
-Mock-Daten fuer das Demo-Ergebnis.
-
-`audit.py`
-
-Technischer Audit-Kern. Oeffnet die Website mit Playwright, wartet auf den DOM,
-liest HTML aus, erstellt einen Screenshot und extrahiert die wichtigsten Signale
-mit BeautifulSoup.
-
-`ai_report.py`
-
-Berichtsschicht. Versucht bei gesetztem API-Key einen KI-Bericht zu erzeugen.
-Die Antwort wird als `AuditReport` validiert. Wenn kein Key gesetzt ist, ein
-Provider-Fehler auftritt oder die Antwort nicht zum Modell passt, nutzt die App
-automatisch den lokalen regelbasierten Bericht.
-
-`models.py`
-
-Pydantic-Datenmodelle fuer Website-Signale, Empfehlungen und den Audit-Bericht.
-Dadurch bleiben Datenfluss und spaetere KI-JSON-Strukturen klar nachvollziehbar.
-
-`utils.py`
-
-Kleine Hilfsfunktionen, aktuell fuer URL-Normalisierung, sichere Dateinamen und
-Ordnererstellung.
-
-`outputs/screenshots/`
-
-Speicherort fuer erzeugte Screenshots. Bilddateien werden per `.gitignore` nicht
-committet, damit das Repository sauber bleibt.
-
-## Installation
-
-Voraussetzung:
-
-- Python 3.11 oder neuer
-- PowerShell oder ein anderes Terminal
-
-Projekt starten:
-
-```powershell
-cd D:\Auto_AI_Projects\KI_Website_Audit_Agent
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-playwright install chromium
-streamlit run app.py
-```
-
-Danach ist die App normalerweise erreichbar unter:
-
-```text
-http://localhost:8501
-```
-
-## Nutzung
-
-1. App mit `streamlit run app.py` starten.
-2. Eine Website-URL im Startscreen eingeben, zum Beispiel `https://example.com`.
-3. Button `Audit starten` klicken.
-4. Ergebnis in der App ansehen:
-   - Score
-   - Website Preview
-   - technische Checkliste
-   - KI-Kurzfazit
-   - Outreach-Zusammenfassung
-   - Screenshot
-   - Verbesserungsvorschlaege
-
-Alternativ kann im Startscreen `Demo-Ergebnis anzeigen` geklickt werden. Das
-nutzt Mock-Daten und ist praktisch fuer schnelle Portfolio-Demos ohne externe
-Website-Abhaengigkeit.
-
-## Konfiguration
-
-Fuer echte KI-Berichte kann eine lokale `.env` angelegt werden:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-Beispiel:
-
-```text
-OPENAI_API_KEY=your_openai_api_key_here
-OPENAI_MODEL=gpt-4o-mini
-OPENAI_BASE_URL=
-```
-
-`OPENAI_BASE_URL` bleibt leer, wenn die normale OpenAI API verwendet wird. Fuer
-OpenAI-kompatible Anbieter kann dort eine alternative `/v1`-Base-URL eingetragen
-werden.
-
-Wenn kein API-Key gesetzt ist, startet die App trotzdem und verwendet den
-lokalen Fallback-Bericht.
-
-## Bewertungslogik
-
-Der aktuelle Score ist bewusst streng und transparent. Vorhandene Felder reichen
-nicht aus; die Signale muessen SEO und Kundengewinnung unterstuetzen.
-
-Punkte gibt es unter anderem fuer:
-
-- erreichbare Website
-- Title mit passender Laenge, Leistung und lokalem Bezug
-- Meta Description mit passender Laenge, Nutzen und CTA
-- genau eine H1, H2-Struktur und ausreichende sichtbare Content-Tiefe
-- starke Anfrage-, Buchungs- oder Anruf-CTAs
-- Kontaktinformationen
-- Adresse und Oeffnungszeiten
-- lokale SEO-Signale
-- Trust-Signale wie Bewertungen, Referenzen oder Erfahrung
-- strukturierte Daten, besonders `LocalBusiness`
-- Canonical, Open Graph, mobile Viewport-Meta
-- interne Links und Bilder mit Alt-Texten
-- Impressum und Datenschutzerklaerung
-- erfolgreich gespeicherten Screenshot
-
-Diese Logik ist keine finale SEO-Bewertung und ersetzt kein professionelles
-Audit. Sie ist aber bewusst streng, damit die Demo nicht nur technische
-Pflichtfelder abnickt, sondern bessere Hinweise zur Kundengewinnung liefert.
-
-Die SEO-Kriterien orientieren sich an grundlegenden Google-Search-Central-Themen
-wie hilfreichen Inhalten, aussagekraeftigen Title Links, Snippets und
-Structured Data. Es gibt keine Garantie auf Rankings; Ziel ist eine bessere
-technische und inhaltliche Grundlage fuer Auffindbarkeit und Conversion.
-
-## KI-Auswertung und Halluzinationsschutz
-
-Die KI bekommt nicht den kompletten Website-Text, sondern nur die gemessenen
-Signale aus `WebsiteSignals`. Der System-Prompt verbietet erfundene Inhalte,
-Rechtsdetails, Lighthouse-Werte, Unterseiten und Branchenfakten. Die Antwort
-muss wieder dem Pydantic-Modell `AuditReport` entsprechen.
-
-Wenn die KI-Antwort leer ist, ungueltiges JSON enthaelt oder nicht zum Modell
-passt, wird automatisch der lokale Bericht genutzt. Dadurch bleibt die App
-robust und nachvollziehbar.
-
-## Grenzen des aktuellen MVP
-
-- Es wird nur eine einzelne URL analysiert.
-- Es gibt keinen Crawler fuer Unterseiten.
-- Rechtliche Seiten werden nur ueber einfache Text- und Link-Heuristiken erkannt.
-- Kontaktinformationen werden ueber einfache Muster wie E-Mail, Telefonnummer,
-  `mailto:` und `tel:` gesucht.
-- Der Screenshot ist aktuell Desktop-basiert.
-- Manche Websites blockieren Headless-Browser oder laden Inhalte erst nach
-  komplexen Cookie-/Consent-Interaktionen.
-
-## Troubleshooting
-
-Wenn Playwright meldet, dass Chromium fehlt:
-
-```powershell
-playwright install chromium
-```
-
-Wenn `python` auf Windows auf einen alten oder falschen Pfad zeigt, Python neu
-installieren oder die Windows-App-Ausfuehrungsaliase fuer Python pruefen. Danach
-die virtuelle Umgebung neu erstellen:
-
-```powershell
-Remove-Item -Recurse -Force .venv
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-playwright install chromium
-```
-
-Wenn eine Website nicht erreichbar ist, kann das verschiedene Ursachen haben:
-
-- URL falsch geschrieben
-- DNS- oder SSL-Problem
-- Website blockiert Headless-Browser
-- Timeout wegen langsamer Seite
-- Weiterleitung oder Consent-Layer verhindert vollstaendige Analyse
-
-## Roadmap
-
-Phase 1: einfache Demo
-
-- Eine URL pruefen
-- Screenshot speichern
-- Basischecks anzeigen
-- lokalen Score erzeugen
-- README und Portfolio-Setup dokumentieren
-
-Status: weitgehend umgesetzt.
-
-Phase 2: bessere Portfolio-Version
-
-- KI-Prompt weiter testen und mit Demo-Websites vergleichen
-- Beispiel-Audits fuer README/Portfolio dokumentieren
-- mobile Ansicht als zweiten Screenshot hinzufuegen
-- UI-Fehlerbehandlung verbessern
-- Beispiel-Screenshots und Demo-Workflow dokumentieren
-
-Phase 3: professionellere Unternehmens-Version
-
-- PDF-Export
-- Lighthouse-CLI oder Web-Vitals-Messung
-- mehrere URLs pro Session
-- Export nach CSV, Airtable oder n8n
-- Audit-Historie mit Datenbank
-- besseres Prompting fuer Branchenkontext
-- sauberer Deployment-Weg fuer Demo oder Kundenpraesentation
-
-## Akzeptanzkriterien fuer Version 1
-
-Version 1 gilt als fertig, wenn:
-
-- die App lokal mit `streamlit run app.py` startet
-- eine URL eingegeben und analysiert werden kann
-- Startscreen, Loading-State, Ergebnis-Dashboard und Fehlerseite sichtbar sind
-- ein Screenshot gespeichert wird
-- die wichtigsten Basischecks sichtbar sind
-- ein Score zwischen 0 und 100 angezeigt wird
-- mindestens drei konkrete Empfehlungen erscheinen
-- technische Fehler fuer den Nutzer verstaendlich angezeigt werden
-- die README die lokale Installation und Nutzung erklaert
-
-## Portfolio-Nutzen
-
-Das Projekt zeigt in kompakter Form:
-
-- Python-Entwicklung mit klarer Modulstruktur
-- Browser-Automation mit Playwright
-- HTML-Parsing mit BeautifulSoup
-- strukturierte Datenverarbeitung mit Pydantic
-- Streamlit als schnelle Demo-Oberflaeche
-- pragmatische Produktentscheidungen fuer einen realistischen MVP
-- Business-orientierte Bewertung statt rein technischer Messwerte
-
-## Lizenz
-
-Noch nicht festgelegt.
+---
+
+## 🚀 Installation & Lokaler Start
+
+### Voraussetzungen
+Stellen Sie sicher, dass Python (Version 3.11 oder neuer) auf Ihrem System installiert ist.
+
+1.  **Repository klonen & in das Verzeichnis wechseln:**
+    ```bash
+    cd KI_Website_Audit_Agent
+    ```
+
+2.  **Virtuelle Umgebung erstellen und aktivieren:**
+    *   **Windows (PowerShell):**
+        ```powershell
+        python -m venv .venv
+        .\.venv\Scripts\Activate.ps1
+        ```
+    *   **macOS / Linux:**
+        ```bash
+        python3 -m venv .venv
+        source .venv/bin/activate
+        ```
+
+3.  **Abhängigkeiten installieren:**
+    ```bash
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
+    ```
+
+4.  **Playwright Chromium-Browser installieren:**
+    ```bash
+    playwright install chromium
+    ```
+
+5.  **Anwendung starten:**
+    ```bash
+    streamlit run app.py
+    ```
+    Die Anwendung öffnet sich automatisch in Ihrem Standardbrowser unter `http://localhost:8501`.
+
+---
+
+## ⚙️ Konfiguration (Optional für echte KI-Berichte)
+
+Das Tool kann vollkommen ohne API-Schlüssel gestartet werden (dank des integrierten Heuristik-Fallbacks). Für vollwertige KI-Analysen können Sie die OpenAI API wie folgt anbinden:
+
+1.  Kopieren Sie die `.env.example` Datei zu `.env`:
+    ```bash
+    cp .env.example .env
+    ```
+2.  Tragen Sie Ihren API-Schlüssel und das gewünschte Modell in die `.env` ein:
+    ```env
+    OPENAI_API_KEY=ihr_api_schluessel_hier
+    OPENAI_MODEL=gpt-4o-mini
+    OPENAI_BASE_URL=
+    ```
+    *(Hinweis: Für alternative, OpenAI-kompatible Schnittstellen kann `OPENAI_BASE_URL` entsprechend angepasst werden).*
+
+---
+
+## 📊 Bewertungskriterien & Logik
+
+Der berechnete Score (0 bis 100) basiert auf harten Kriterien, die für kleine, lokale Dienstleister geschäftskritisch sind:
+
+*   **Technische Erreichbarkeit (Status-Code & Timeouts)**
+*   **SEO-Basics:** Vorhandensein, Länge und Qualität von Seitentitel und Meta-Beschreibung (inkl. Prüfung auf Benefit/CTA).
+*   **Content-Struktur:** Korrekte Verwendung von genau einer H1-Überschrift sowie das Vorhandensein relevanter Leistungsbegriffe.
+*   **Conversion-Stärke:** Erkennung von starken Handlungsaufforderungen (CTAs) im sichtbaren Bereich.
+*   **Lokale Relevanz:** Erkennung von Adressdaten, Öffnungszeiten und dem `LocalBusiness` Schema (Structured Data).
+*   **Trust-Faktoren:** Vorhandensein von Kundenbewertungen, Testimonials, Referenzen oder Auszeichnungen.
+*   **Rechtliche Sicherheit:** Vorhandensein von Impressums- und Datenschutzerklärungs-Links.
+
+---
+
+## 🔒 Halluzinationsschutz & Auswertungssicherheit
+
+Damit die KI keine fehlerhaften Behauptungen über die geprüfte Website aufstellt (Halluzinationen), wurde ein strenges Sicherheitskonzept implementiert:
+1.  **Datenminimierung:** An die API wird kein roher HTML-Code übergeben, sondern ausschließlich das strukturierte, lokal validierte Pydantic-Modell `WebsiteSignals`.
+2.  **Strikter Systemprompt:** Der Prompt verbietet der KI das Erfinden von Fakten, Brancheninformationen oder nicht gemessenen technischen Werten.
+3.  **Pydantic-Validierung:** Die Antwort der KI wird direkt über das Modell `AuditReport` geparst. Ist das JSON ungültig oder entspricht nicht dem Schema, greift die App geräuschlos auf den regelbasierten Fallback-Bericht zurück.
+
+---
+
+## 🌟 Showcase-Nutzen (Bewerbungen & Portfolio)
+
+Dieses Projekt dient als praktischer Beleg für folgende Fähigkeiten:
+*   **Saubere Software-Architektur:** Klare Trennung von UI-Logik (`ui/`), Business-Logic (`audit.py`, `ai_report.py`), Datenmodellierung (`models.py`) und Konfiguration.
+*   **Praxisnahe Automation:** Robuster Einsatz von Playwright zur Gewinnung strukturierter Rohdaten und Screenshots im Hintergrund.
+*   **Modernes UI-UX-Design:** Einbindung maßgeschneiderter CSS-Stylesheets in Streamlit für ansprechende Micro-Interaktionen, responsive Layouts und stimmige visuelle Zustände.
+*   **Robuste Fehlerbehandlung:** Graceful Degradation und API-Fallbacks sorgen für eine fehlerfreie Vorführbarkeit der Anwendung unter allen Bedingungen.
+
+---
+
+## 📄 Lizenz
+
+Dieses Projekt ist unter der MIT-Lizenz veröffentlicht. Weitere Details finden Sie in der Lizenzdatei.
