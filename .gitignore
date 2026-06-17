@@ -2,7 +2,9 @@
 .venv/
 __pycache__/
 *.py[cod]
+.uv-cache/
 
 outputs/screenshots/*.png
 outputs/screenshots/*.jpg
 outputs/screenshots/*.jpeg
+outputs/playwright/

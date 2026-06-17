@@ -11,11 +11,15 @@ strukturierte Datenmodelle, Website-Analyse und spaetere KI-Auswertung.
 
 ## Aktueller Stand
 
-Der aktuelle MVP ist lauffaehig und kann eine einzelne URL pruefen.
+Der aktuelle MVP ist lauffaehig und kann eine einzelne URL pruefen. Die
+Streamlit-Oberflaeche wurde anhand der Stitch-Designs als kompakter
+Audit-Agent-Prototyp umgesetzt.
 
 Bereits umgesetzt:
 
-- Streamlit-Oberflaeche mit URL-Eingabe
+- Stitch-inspirierte Streamlit-Oberflaeche mit Custom CSS
+- vier App-Zustaende: Startscreen, Loading-State, Ergebnis-Dashboard und Fehlerseite
+- Demo-Ergebnis mit Mock-Daten fuer schnelle Portfolio-Praesentation
 - Playwright-basierter Seitenaufruf im Headless-Browser
 - HTTP-Status und grobe Ladezeitmessung
 - HTML-Auswertung mit BeautifulSoup
@@ -30,7 +34,8 @@ Bereits umgesetzt:
 - Validierung der KI-Antwort mit Pydantic
 - automatischer Fallback auf lokalen Bericht, wenn kein API-Key vorhanden ist
 - bis zu 5 konkrete Verbesserungsvorschlaege mit Prioritaet und Business-Nutzen
-- Anzeige von Rohdaten und technischen Hinweisen in Streamlit
+- Ergebnis-Dashboard mit Score, Website Preview, technischer Checkliste,
+  KI-Kurzfazit, Outreach-Zusammenfassung und priorisierten Empfehlungen
 
 Noch nicht umgesetzt:
 
@@ -54,14 +59,15 @@ umgesetzt:
 4. Playwright-basierter Website-Aufruf
 5. Website-Daten extrahieren
 6. Basischecks fuer Titel, Meta, H1, CTA, Impressum, Datenschutz und Kontakt
-7. Streamlit-UI mit Basis-, SEO-, Local-SEO- und Conversion-Tabs
+7. Streamlit-UI als Stitch-inspiriertes Dashboard mit Start-, Loading-,
+   Ergebnis- und Fehlerzustand
 8. KI-Bericht mit API-Key-Erkennung, Pydantic-Validierung und lokalem Fallback
-9. Fehlerbehandlung teilweise umgesetzt
+9. Fehlerbehandlung mit eigener Nutzerseite umgesetzt
 10. README und Portfolio-Dokumentation gestartet
 
 Noch offen fuer eine runde Version 1:
 
-- echten lokalen Browser-Testlauf mit Beispiel-Websites ausfuehren
+- UI-Feinschliff fuer kleinere Viewports weiter ausbauen
 - UI-Fehlertexte weiter polieren
 - optional Demo-Screenshot fuer README/Portfolio erzeugen
 - optional mobilen Screenshot ergaenzen
@@ -88,6 +94,12 @@ audit.py
 ai_report.py
 models.py
 utils.py
+assets/
+  styles.css
+ui/
+  components.py
+  sample_data.py
+  state.py
 requirements.txt
 .env.example
 .gitignore
@@ -102,8 +114,19 @@ Stitch_Design/
 
 `app.py`
 
-Streamlit-App. Baut die Oberflaeche, nimmt die URL entgegen, startet den Audit
-und zeigt Score, Basischecks, Screenshot, Empfehlungen und Rohdaten an.
+Streamlit-App. Steuert die vier UI-Zustaende, nimmt die URL entgegen, startet
+den Audit und zeigt Score, Checkliste, Screenshot, Kurzfazit, Outreach-Text und
+Empfehlungen an.
+
+`assets/styles.css`
+
+Custom CSS fuer die Stitch-inspirierte Oberflaeche, inklusive Topbar, Startscreen,
+Loading-State, Dashboard-Karten, Fehlerseite und responsive Anpassungen.
+
+`ui/`
+
+Kleine UI-Schicht mit wiederverwendbaren Komponenten, Session-State-Helfern und
+Mock-Daten fuer das Demo-Ergebnis.
 
 `audit.py`
 
@@ -161,17 +184,20 @@ http://localhost:8501
 ## Nutzung
 
 1. App mit `streamlit run app.py` starten.
-2. Eine Website-URL in der Sidebar eingeben, zum Beispiel `https://example.com`.
-3. Button `Website analysieren` klicken.
+2. Eine Website-URL im Startscreen eingeben, zum Beispiel `https://example.com`.
+3. Button `Audit starten` klicken.
 4. Ergebnis in der App ansehen:
    - Score
-   - HTTP-Status
-   - Ladezeit
-   - Basischecks
+   - Website Preview
+   - technische Checkliste
+   - KI-Kurzfazit
+   - Outreach-Zusammenfassung
    - Screenshot
-   - wichtigste Probleme
    - Verbesserungsvorschlaege
-   - gemessene Rohdaten
+
+Alternativ kann im Startscreen `Demo-Ergebnis anzeigen` geklickt werden. Das
+nutzt Mock-Daten und ist praktisch fuer schnelle Portfolio-Demos ohne externe
+Website-Abhaengigkeit.
 
 ## Konfiguration
 
@@ -313,6 +339,7 @@ Version 1 gilt als fertig, wenn:
 
 - die App lokal mit `streamlit run app.py` startet
 - eine URL eingegeben und analysiert werden kann
+- Startscreen, Loading-State, Ergebnis-Dashboard und Fehlerseite sichtbar sind
 - ein Screenshot gespeichert wird
 - die wichtigsten Basischecks sichtbar sind
 - ein Score zwischen 0 und 100 angezeigt wird
