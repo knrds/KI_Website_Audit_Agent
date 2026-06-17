@@ -6,3 +6,6 @@ __pycache__/
 outputs/screenshots/*.png
 outputs/screenshots/*.jpg
 outputs/screenshots/*.jpeg
+
+# Local leftovers from the earlier nested project layout.
+KI_Website_Audit_Agent/

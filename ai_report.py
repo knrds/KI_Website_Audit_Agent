@@ -1,13 +1,114 @@
 from __future__ import annotations
 
-from models import AuditReport, Recommendation, WebsiteSignals
+import json
+import os
+
+from pydantic import ValidationError
+
+from models import AuditReport, Recommendation, ReportGenerationResult, WebsiteSignals
+
+
+SYSTEM_PROMPT = """\
+Du bist ein pragmatischer Website-Audit-Assistent fuer lokale Unternehmen.
+
+Regeln:
+- Bewerte ausschliesslich die gemessenen Website-Daten aus dem JSON.
+- Erfinde keine Inhalte, Rechtsdetails, Lighthouse-Werte, Unterseiten oder Branchenfakten.
+- Wenn ein Signal fehlt oder unsicher ist, benenne es als fehlend oder unklar.
+- Schreibe kurz, konkret und business-orientiert.
+- Gib genau ein JSON-Objekt zurueck, ohne Markdown und ohne Erklaertext.
+- Das JSON muss die Felder summary, score, key_issues und recommendations enthalten.
+- score ist eine ganze Zahl von 0 bis 100.
+- recommendations enthaelt maximal 5 Eintraege.
+- Jede recommendation hat title, priority, business_value und action.
+- priority ist genau einer dieser Werte: hoch, mittel, niedrig.
+"""
+
+
+def create_report(signals: WebsiteSignals, prefer_ai: bool = True) -> ReportGenerationResult:
+    """Create an AI report when possible, otherwise return the local fallback."""
+
+    if prefer_ai:
+        try:
+            report = create_ai_report(signals)
+            return ReportGenerationResult(
+                report=report,
+                source="ai",
+                message="KI-Bericht wurde erfolgreich erzeugt.",
+            )
+        except Exception as exc:  # noqa: BLE001 - fallback should catch provider/runtime issues
+            fallback = create_local_report(signals)
+            return ReportGenerationResult(
+                report=fallback,
+                source="local",
+                message=f"Lokaler Bericht genutzt: {exc}",
+            )
+
+    return ReportGenerationResult(
+        report=create_local_report(signals),
+        source="local",
+        message="Lokaler Bericht wurde manuell ausgewaehlt.",
+    )
+
+
+def create_ai_report(signals: WebsiteSignals) -> AuditReport:
+    """Generate a structured report with the OpenAI SDK or a compatible API."""
+
+    try:
+        from dotenv import load_dotenv
+
+        load_dotenv()
+    except ImportError:
+        pass
+
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key or api_key == "your_openai_api_key_here":
+        raise RuntimeError("OPENAI_API_KEY fehlt oder ist noch ein Platzhalter.")
+
+    try:
+        from openai import OpenAI
+    except ImportError as exc:
+        raise RuntimeError("OpenAI-Paket ist nicht installiert. Bitte requirements.txt installieren.") from exc
+
+    model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+    base_url = os.getenv("OPENAI_BASE_URL") or None
+    client = OpenAI(api_key=api_key, base_url=base_url) if base_url else OpenAI(api_key=api_key)
+
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": _build_user_prompt(signals)},
+    ]
+
+    parse_method = getattr(client.chat.completions, "parse", None)
+    if parse_method:
+        try:
+            completion = parse_method(
+                model=model,
+                messages=messages,
+                response_format=AuditReport,
+                temperature=0.2,
+            )
+            parsed = completion.choices[0].message.parsed
+            if parsed:
+                return _normalize_report(AuditReport.model_validate(parsed), signals)
+        except Exception:
+            pass
+
+    completion = client.chat.completions.create(
+        model=model,
+        messages=messages,
+        response_format={"type": "json_object"},
+        temperature=0.2,
+    )
+    content = completion.choices[0].message.content
+    if not content:
+        raise RuntimeError("KI-Antwort war leer.")
+
+    return _normalize_report(_parse_report_content(content), signals)
 
 
 def create_local_report(signals: WebsiteSignals) -> AuditReport:
-    """Create a deterministic report from measured signals.
-
-    This is the local fallback before the OpenAI integration is added.
-    """
+    """Create a deterministic report from measured signals."""
 
     issues = _collect_issues(signals)
     recommendations = _build_recommendations(signals)
@@ -36,6 +137,54 @@ def create_placeholder_report(signals: WebsiteSignals) -> AuditReport:
     """Backward-compatible wrapper for the first prototype."""
 
     return create_local_report(signals)
+
+
+def _build_user_prompt(signals: WebsiteSignals) -> str:
+    payload = {
+        "task": "Erstelle einen kurzen Website-Audit-Bericht fuer ein lokales Unternehmen.",
+        "website_signals": signals.model_dump(),
+        "output_contract": {
+            "summary": "Kurzes Fazit in 1-2 Saetzen.",
+            "score": "Integer 0-100 auf Basis der gemessenen Signale.",
+            "key_issues": "Liste der wichtigsten Probleme, nur aus gemessenen Daten ableiten.",
+            "recommendations": "Maximal 5 konkrete Vorschlaege mit Prioritaet und Business-Nutzen.",
+        },
+    }
+    return json.dumps(payload, ensure_ascii=True, indent=2)
+
+
+def _parse_report_content(content: str) -> AuditReport:
+    cleaned = content.strip()
+    if cleaned.startswith("```"):
+        cleaned = cleaned.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+
+    try:
+        return AuditReport.model_validate_json(cleaned)
+    except ValidationError as exc:
+        raise RuntimeError(f"KI-Antwort passte nicht zum AuditReport-Schema: {exc}") from exc
+
+
+def _normalize_report(report: AuditReport, signals: WebsiteSignals) -> AuditReport:
+    local_report = create_local_report(signals)
+
+    recommendations = report.recommendations[:5]
+    existing_titles = {recommendation.title for recommendation in recommendations}
+    for recommendation in local_report.recommendations:
+        if len(recommendations) >= 5:
+            break
+        if recommendation.title not in existing_titles:
+            recommendations.append(recommendation)
+            existing_titles.add(recommendation.title)
+
+    key_issues = report.key_issues or local_report.key_issues
+    summary = report.summary or local_report.summary
+
+    return AuditReport(
+        summary=summary,
+        score=report.score,
+        key_issues=key_issues[:8],
+        recommendations=recommendations,
+    )
 
 
 def _calculate_score(signals: WebsiteSignals) -> int:

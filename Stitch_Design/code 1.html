@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html class="light" lang="de"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Website Audit Agent - Ergebnis-Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#141b2b",
+                        "surface": "#fcf8ff",
+                        "on-secondary-fixed-variant": "#404758",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#dad7ff",
+                        "on-secondary-container": "#5c6274",
+                        "surface-tint": "#4d44e3",
+                        "inverse-surface": "#302f39",
+                        "surface-bright": "#fcf8ff",
+                        "tertiary-fixed-dim": "#ffb695",
+                        "secondary-fixed": "#dce2f7",
+                        "surface-container-highest": "#e4e1ee",
+                        "background": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "secondary": "#575e70",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#eae6f4",
+                        "on-tertiary-container": "#ffd2be",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "error": "#ba1a1a",
+                        "secondary-container": "#d9dff5",
+                        "primary": "#3525cd",
+                        "tertiary": "#7e3000",
+                        "inverse-on-surface": "#f3effc",
+                        "inverse-primary": "#c3c0ff",
+                        "on-primary-fixed": "#0f0069",
+                        "on-background": "#1b1b24",
+                        "surface-dim": "#dcd8e5",
+                        "on-surface": "#1b1b24",
+                        "on-tertiary-fixed-variant": "#7b2f00",
+                        "outline": "#777587",
+                        "tertiary-container": "#a44100",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "tertiary-fixed": "#ffdbcc",
+                        "primary-container": "#4f46e5",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#c7c4d8",
+                        "surface-variant": "#e4e1ee",
+                        "on-tertiary-fixed": "#351000",
+                        "secondary-fixed-dim": "#c0c6db",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#464555",
+                        "primary-fixed": "#e2dfff",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "xl": "32px",
+                        "2xl": "48px",
+                        "xs": "4px",
+                        "container-max": "1440px",
+                        "lg": "24px",
+                        "base": "4px",
+                        "gutter": "24px",
+                        "3xl": "64px",
+                        "md": "16px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-sm": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #1b1b24; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .filled-icon { font-variation-settings: 'FILL' 1; }
+        
+        .score-ring {
+            stroke-dasharray: 283;
+            stroke-dashoffset: 283;
+            transition: stroke-dashoffset 1.5s ease-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav aria-label="Main Navigation" class="bg-surface-container-lowest border-b border-outline-variant shadow-sm fixed top-0 w-full z-50 flex justify-between items-center px-lg h-16 mx-auto max-w-container-max">
+<div class="flex items-center gap-4">
+<span class="text-headline-md font-headline-md font-bold text-primary">Website Audit Agent</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors opacity-100 hover:opacity-80">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors opacity-100 hover:opacity-80">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<img alt="User Profile" class="w-8 h-8 rounded-full border border-outline-variant object-cover ml-2" data-alt="A small, professional profile picture of a user, circular crop, bright and clean corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDELiujf93QjuHYDQbCfgJ5wlQfVsqYINeI9XFdpPFcqyyOmlSPjX8ScoB0a81OgGLnHCNQq4TeTH5yhxlgILt2MH1uQBr6_ckCiQbwUF6ItjwcykeNEOQdy6Wo8PTFuLXBGRbtdfGhKlWrqLeWYVEjz-rpmgLpeFxWkNOe0dC6ch6OtojglU0TW8-weQYDvPSde1Chbyco_hdwSSu_27jObUQSwTHGLX7b5h7mr6DwOYWOAeFSFkg2SCKS3NZVR-_pkSctMypMagI"/>
+</div>
+</nav>
+<div class="flex flex-1 pt-16 max-w-container-max mx-auto w-full">
+<!-- SideNavBar -->
+<aside class="bg-surface-container w-[280px] hidden lg:flex flex-col p-md gap-sm border-r border-outline-variant fixed left-0 top-16 h-[calc(100vh-4rem)]">
+<div class="mb-6 px-4">
+<h2 class="text-headline-sm font-headline-sm font-bold text-on-surface">Audit Agent</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Analytical SEO</p>
+<button class="mt-4 w-full bg-primary-container text-on-primary font-label-md text-label-md py-2 px-4 rounded-lg hover:bg-primary transition-colors flex items-center justify-center gap-2 shadow-sm">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                    New Audit
+                </button>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-all scale-98 active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-secondary-container text-on-secondary-container transition-all scale-98 active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="text-label-md font-label-md font-bold">Audit History</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-all scale-98 active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span class="text-label-md font-label-md">SEO Tools</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-all scale-98 active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="compare_arrows">compare_arrows</span>
+<span class="text-label-md font-label-md">Competitors</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-all scale-98 active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 w-full lg:ml-[280px] p-margin-mobile md:p-gutter">
+<!-- Dashboard Header & Score -->
+<header class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+<div>
+<h1 class="text-headline-lg font-headline-lg text-on-background mb-2">Ergebnis-Dashboard</h1>
+<div class="flex items-center gap-2 text-body-sm font-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">language</span>
+<a class="hover:underline text-primary" href="https://baeckerei-schmidt.de">https://baeckerei-schmidt.de</a>
+<span class="mx-2">•</span>
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+<span>24. Okt 2023, 14:30 Uhr</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-surface-container-lowest border border-outline-variant text-on-surface-variant px-4 py-2 rounded-lg hover:bg-surface-container-low transition-colors text-label-md font-label-md flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+                        PDF exportieren
+                    </button>
+<button class="bg-surface-container-lowest border border-outline-variant text-on-surface-variant px-4 py-2 rounded-lg hover:bg-surface-container-low transition-colors text-label-md font-label-md flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined">save</span>
+                        Audit speichern
+                    </button>
+<button class="bg-primary-container text-on-primary px-4 py-2 rounded-lg hover:bg-primary transition-colors text-label-md font-label-md flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined">add</span>
+                        Neue Website
+                    </button>
+</div>
+</header>
+<!-- Top Grid: Score & Preview -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-gutter mb-8">
+<!-- Score Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6 flex flex-col items-center justify-center relative overflow-hidden">
+<div class="absolute top-4 right-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                            Warnung: Optimierung empfohlen
+                        </span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-surface mb-6 self-start w-full border-b border-outline-variant pb-4">Gesamt-Score</h3>
+<div class="relative w-48 h-48 mb-4">
+<svg class="w-full h-full" viewbox="0 0 100 100">
+<!-- Background Circle -->
+<circle cx="50" cy="50" fill="none" r="45" stroke="#e5e7eb" stroke-width="8"></circle>
+<!-- Progress Circle (68%) -->
+<circle class="score-ring" cx="50" cy="50" fill="none" r="45" stroke="#f59e0b" stroke-dashoffset="90" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-display-lg font-display-lg text-on-surface">68</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">von 100</span>
+</div>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant text-center mt-2 max-w-[80%]">
+                        Die Basis ist solide, aber es gibt entscheidende Potenziale in der technischen SEO und Konvertierung.
+                    </p>
+</div>
+<!-- Screenshot Preview -->
+<div class="xl:col-span-2 bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm flex flex-col overflow-hidden">
+<div class="p-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<h3 class="text-label-md font-label-md font-bold text-on-surface">Website Preview</h3>
+<div class="flex bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden">
+<button class="px-3 py-1.5 bg-surface-variant text-on-surface text-sm flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[18px]">desktop_windows</span> Desktop
+                            </button>
+<button class="px-3 py-1.5 hover:bg-surface-container-low text-on-surface-variant text-sm flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[18px]">smartphone</span> Mobile
+                            </button>
+</div>
+</div>
+<div class="flex-1 bg-surface-dim p-4 flex items-center justify-center relative min-h-[300px]">
+<div class="w-full h-full max-h-[400px] rounded-lg overflow-hidden shadow-md border border-outline-variant bg-surface-container-lowest relative">
+<img alt="Website Preview" class="w-full h-full object-cover object-top" data-alt="A clean, modern screenshot of a fictional German bakery website named 'Bäckerei Schmidt'. The design features high-quality images of fresh bread and pastries. It has a navigation bar but lacks a prominent call-to-action button. The aesthetic is warm, inviting, and professional, characteristic of a high-end local business. Light mode UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCn9PbnuQy1ghiC2nXmL3AE5wBj83CbLNLa6QHNpUg39ogUDdeYyfpsdwAM7nqFRQ7AZoywWaWYYiKaczdTJKscWxN0iAZ4Hezc6UA8jtH8ZjiXvmkyc1Rt_wSyUSuG-HC3vhijCvlzDJoR8bgt0ljmmrkbvoBAbTmFJgj5fnGzpUAbyqi_Yy6EULcncXBDEry8Y7QnbEO90H3EdE5OUt58igYm87tzLVoOhoEc7ZX8BsK_9xUr3p0BZwol7w_D0l3WEPk5g-ttkE8"/>
+<div class="absolute top-0 left-0 w-full h-8 bg-surface-container-highest border-b border-outline-variant flex items-center px-3 gap-1.5">
+<div class="w-3 h-3 rounded-full bg-red-400"></div>
+<div class="w-3 h-3 rounded-full bg-amber-400"></div>
+<div class="w-3 h-3 rounded-full bg-green-400"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bento Grid: Details -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter mb-8">
+<!-- Technische Checkliste -->
+<div class="lg:col-span-7 bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6">
+<h3 class="text-headline-md font-headline-md text-on-surface mb-6 border-b border-outline-variant pb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">checklist</span>
+                        Technische Checkliste
+                    </h3>
+<div class="space-y-0">
+<!-- Item 1 -->
+<div class="flex items-center justify-between py-3 border-b border-outline-variant/50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-emerald-600 filled-icon">check_circle</span>
+<span class="text-body-md font-body-md text-on-surface">Website erreichbar</span>
+</div>
+<span class="px-2 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded border border-emerald-200">Bestanden</span>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center justify-between py-3 border-b border-outline-variant/50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-emerald-600 filled-icon">check_circle</span>
+<span class="text-body-md font-body-md text-on-surface">Seitentitel vorhanden</span>
+</div>
+<span class="px-2 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded border border-emerald-200">Bestanden</span>
+</div>
+<!-- Item 3 -->
+<div class="flex items-center justify-between py-3 border-b border-outline-variant/50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-amber-500 filled-icon">warning</span>
+<span class="text-body-md font-body-md text-on-surface">Meta Description vorhanden</span>
+</div>
+<span class="px-2 py-1 bg-amber-50 text-amber-700 text-xs font-semibold rounded border border-amber-200">Warnung</span>
+</div>
+<!-- Item 4 -->
+<div class="flex items-center justify-between py-3 border-b border-outline-variant/50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-emerald-600 filled-icon">check_circle</span>
+<span class="text-body-md font-body-md text-on-surface">H1 vorhanden</span>
+</div>
+<span class="px-2 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded border border-emerald-200">Bestanden</span>
+</div>
+<!-- Item 5 -->
+<div class="flex items-center justify-between py-3 border-b border-outline-variant/50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-rose-600 filled-icon">error</span>
+<span class="text-body-md font-body-md text-on-surface">CTA erkannt</span>
+</div>
+<span class="px-2 py-1 bg-rose-50 text-rose-700 text-xs font-semibold rounded border border-rose-200">Fehler</span>
+</div>
+<!-- Item 6 -->
+<div class="flex items-center justify-between py-3 border-b border-outline-variant/50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-emerald-600 filled-icon">check_circle</span>
+<span class="text-body-md font-body-md text-on-surface">Impressum gefunden</span>
+</div>
+<span class="px-2 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded border border-emerald-200">Bestanden</span>
+</div>
+<!-- Item 7 -->
+<div class="flex items-center justify-between py-3">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-emerald-600 filled-icon">check_circle</span>
+<span class="text-body-md font-body-md text-on-surface">Datenschutzerklärung gefunden</span>
+</div>
+<span class="px-2 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded border border-emerald-200">Bestanden</span>
+</div>
+</div>
+</div>
+<!-- Right Column: AI Summary & Outreach -->
+<div class="lg:col-span-5 flex flex-col gap-gutter">
+<!-- KI-Zusammenfassung -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -z-10"></div>
+<h3 class="text-headline-md font-headline-md text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container">auto_awesome</span>
+                            KI-Kurzfazit
+                        </h3>
+<p class="text-body-md font-body-md text-on-surface-variant leading-relaxed">
+                            Die Website ist grundsätzlich erreichbar und enthält wichtige Vertrauenselemente wie Impressum und Kontaktinformationen. Es fehlt jedoch ein klarer Call-to-Action im sichtbaren Bereich, und die SEO-Basis könnte durch eine bessere Meta Description gestärkt werden.
+                        </p>
+</div>
+<!-- Outreach -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6">
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-4 flex items-center gap-2 border-b border-outline-variant pb-2">
+<span class="material-symbols-outlined text-secondary">mail</span>
+                            Outreach-Zusammenfassung
+                        </h3>
+<div class="bg-surface-container-low p-4 rounded-lg border border-outline-variant/50 mb-4">
+<p class="text-body-sm font-body-sm text-on-surface-variant font-mono text-sm">
+                                "Hallo Bäckerei Schmidt-Team,<br/><br/>mir ist aufgefallen, dass Ihre Website eine solide Basis hat, aber wertvolle Kundenanfragen verpasst, da ein klarer Handlungsaufruf (CTA) auf der Startseite fehlt. Gerne zeige ich Ihnen kurz auf, wie wir das schnell optimieren können."
+                            </p>
+</div>
+<button class="w-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors text-label-md font-label-md flex items-center justify-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">content_copy</span>
+                            Text kopieren
+                        </button>
+</div>
+</div>
+</div>
+<!-- Verbesserungsvorschläge (Cards Grid) -->
+<section class="mb-12">
+<h2 class="text-headline-lg font-headline-lg text-on-surface mb-6">Handlungsempfehlungen</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<!-- Prio Hoch -->
+<div class="bg-surface-container-lowest rounded-xl border border-rose-200 shadow-sm p-5 hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
+<div class="flex justify-between items-start mb-3">
+<span class="px-2.5 py-1 bg-rose-50 text-rose-700 text-xs font-semibold rounded border border-rose-200 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">priority_high</span> Hoch
+                            </span>
+</div>
+<h4 class="text-headline-sm font-headline-sm text-on-surface mb-2 group-hover:text-primary transition-colors">Klaren Call-to-Action im Header ergänzen</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Besucher benötigen direkte Führung zur gewünschten Aktion (z.B. "Vorbestellen" oder "Kontakt").</p>
+</div>
+<!-- Prio Hoch -->
+<div class="bg-surface-container-lowest rounded-xl border border-rose-200 shadow-sm p-5 hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
+<div class="flex justify-between items-start mb-3">
+<span class="px-2.5 py-1 bg-rose-50 text-rose-700 text-xs font-semibold rounded border border-rose-200 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">priority_high</span> Hoch
+                            </span>
+</div>
+<h4 class="text-headline-sm font-headline-sm text-on-surface mb-2 group-hover:text-primary transition-colors">Öffnungszeiten direkt sichtbar machen</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Für ein lokales Geschäft ist dies eine der wichtigsten Informationen. Muss "above the fold" sein.</p>
+</div>
+<!-- Prio Mittel -->
+<div class="bg-surface-container-lowest rounded-xl border border-amber-200 shadow-sm p-5 hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+<div class="flex justify-between items-start mb-3">
+<span class="px-2.5 py-1 bg-amber-50 text-amber-700 text-xs font-semibold rounded border border-amber-200 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">remove</span> Mittel
+                            </span>
+</div>
+<h4 class="text-headline-sm font-headline-sm text-on-surface mb-2 group-hover:text-primary transition-colors">Meta Description für lokale Suche optimieren</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Die aktuelle Description ist generisch. Lokale Keywords (Stadt, Viertel) sollten ergänzt werden.</p>
+</div>
+<!-- Prio Mittel -->
+<div class="bg-surface-container-lowest rounded-xl border border-amber-200 shadow-sm p-5 hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+<div class="flex justify-between items-start mb-3">
+<span class="px-2.5 py-1 bg-amber-50 text-amber-700 text-xs font-semibold rounded border border-amber-200 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">remove</span> Mittel
+                            </span>
+</div>
+<h4 class="text-headline-sm font-headline-sm text-on-surface mb-2 group-hover:text-primary transition-colors">Telefonnummer auf Mobilgeräten prominenter</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Ermöglicht schnelle Anrufe ("Click-to-Call") direkt aus dem Header auf Smartphones.</p>
+</div>
+<!-- Prio Niedrig -->
+<div class="bg-surface-container-lowest rounded-xl border border-emerald-200 shadow-sm p-5 hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+<div class="flex justify-between items-start mb-3">
+<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded border border-emerald-200 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">arrow_downward</span> Niedrig
+                            </span>
+</div>
+<h4 class="text-headline-sm font-headline-sm text-on-surface mb-2 group-hover:text-primary transition-colors">Startseite visuell moderner strukturieren</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Kosmetische Verbesserungen zur Steigerung der wahrgenommenen Wertigkeit des Handwerks.</p>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant w-full py-lg px-xl flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto mt-auto">
+<div class="text-label-md font-label-md font-bold text-on-surface-variant mb-4 md:mb-0">
+                    © 2024 Website Audit Agent. All rights reserved.
+                </div>
+<div class="flex gap-6">
+<a class="text-body-sm font-body-sm text-on-secondary-container hover:text-primary underline opacity-100 hover:opacity-80 transition-opacity" href="#">Documentation</a>
+<a class="text-body-sm font-body-sm text-on-secondary-container hover:text-primary underline opacity-100 hover:opacity-80 transition-opacity" href="#">Privacy Policy</a>
+<a class="text-body-sm font-body-sm text-on-secondary-container hover:text-primary underline opacity-100 hover:opacity-80 transition-opacity" href="#">Support</a>
+<a class="text-body-sm font-body-sm text-on-secondary-container hover:text-primary underline opacity-100 hover:opacity-80 transition-opacity" href="#">Terms of Service</a>
+</div>
+</footer>
+</main>
+</div>
+<script>
+        // Trigger stroke animation for score ring after load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const ring = document.querySelector('.score-ring');
+                if(ring) {
+                    // 68% of 283 (circumference) = 192.44, offset is 283 - 192.44 = 90.56
+                    ring.style.strokeDashoffset = '90.56';
+                }
+            }, 100);
+        });
+    </script>
+</body></html>

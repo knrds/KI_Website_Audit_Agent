@@ -24,20 +24,45 @@ Bereits umgesetzt:
 - Screenshot der analysierten Website
 - Pydantic-Modelle fuer strukturierte Audit-Daten
 - lokaler regelbasierter Score von 0 bis 100
+- optionaler KI-Bericht ueber OpenAI API oder kompatible API
+- Validierung der KI-Antwort mit Pydantic
+- automatischer Fallback auf lokalen Bericht, wenn kein API-Key vorhanden ist
 - bis zu 5 konkrete Verbesserungsvorschlaege mit Prioritaet und Business-Nutzen
 - Anzeige von Rohdaten und technischen Hinweisen in Streamlit
 
 Noch nicht umgesetzt:
 
-- echte OpenAI-Auswertung
 - PDF-Export
 - mobile Zweitansicht
 - Lighthouse- oder Web-Vitals-Analyse
 - Datenbank, Login, Multi-URL-Crawling oder SaaS-Funktionen
 
-Die KI-Anbindung ist vorbereitet, aber absichtlich noch nicht aktiv. Der Bericht
-wird aktuell lokal und deterministisch erzeugt, damit das Projekt ohne API-Key
-startbar bleibt.
+Die KI-Anbindung ist optional. Ohne `.env` oder API-Key wird automatisch ein
+lokaler regelbasierter Bericht erzeugt, damit das Projekt weiterhin ohne externe
+Abhaengigkeiten demo-faehig bleibt.
+
+## Stand nach init.md
+
+Aus dem urspruenglichen Implementierungsplan sind aktuell diese Schritte
+umgesetzt:
+
+1. Projektordner und Setup
+2. Dependencies und Env-Beispiel
+3. Grundstruktur mit Modulen
+4. Playwright-basierter Website-Aufruf
+5. Website-Daten extrahieren
+6. Basischecks fuer Titel, Meta, H1, CTA, Impressum, Datenschutz und Kontakt
+7. Streamlit-UI
+8. KI-Bericht mit API-Key-Erkennung, Pydantic-Validierung und lokalem Fallback
+9. Fehlerbehandlung teilweise umgesetzt
+10. README und Portfolio-Dokumentation gestartet
+
+Noch offen fuer eine runde Version 1:
+
+- echten lokalen Testlauf in einer stabilen Python-Umgebung ausfuehren
+- UI-Fehlertexte weiter polieren
+- optional Demo-Screenshot fuer README/Portfolio erzeugen
+- optional mobilen Screenshot ergaenzen
 
 ## Zielgruppe
 
@@ -56,19 +81,19 @@ und Kontaktaufnahme bietet.
 ## Projektstruktur
 
 ```text
-KI_Website_Audit_Agent/
-  app.py
-  audit.py
-  ai_report.py
-  models.py
-  utils.py
-  requirements.txt
-  .env.example
-  .gitignore
-  README.md
-  outputs/
-    screenshots/
-      .gitkeep
+app.py
+audit.py
+ai_report.py
+models.py
+utils.py
+requirements.txt
+.env.example
+.gitignore
+README.md
+outputs/
+  screenshots/
+    .gitkeep
+Stitch_Design/
 ```
 
 ## Dateien
@@ -86,9 +111,10 @@ mit BeautifulSoup.
 
 `ai_report.py`
 
-Berichtsschicht. Erzeugt aktuell einen lokalen regelbasierten Bericht aus den
-gemessenen Signalen. Diese Datei ist der geplante Einstiegspunkt fuer die
-spaetere OpenAI-Integration.
+Berichtsschicht. Versucht bei gesetztem API-Key einen KI-Bericht zu erzeugen.
+Die Antwort wird als `AuditReport` validiert. Wenn kein Key gesetzt ist, ein
+Provider-Fehler auftritt oder die Antwort nicht zum Modell passt, nutzt die App
+automatisch den lokalen regelbasierten Bericht.
 
 `models.py`
 
@@ -115,7 +141,7 @@ Voraussetzung:
 Projekt starten:
 
 ```powershell
-cd D:\Auto_AI_Projects\KI_Website_Audit_Agent
+cd D:\Auto_AI_Projects
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
@@ -147,7 +173,7 @@ http://localhost:8501
 
 ## Konfiguration
 
-Fuer die spaetere KI-Anbindung kann eine lokale `.env` angelegt werden:
+Fuer echte KI-Berichte kann eine lokale `.env` angelegt werden:
 
 ```powershell
 Copy-Item .env.example .env
@@ -158,9 +184,15 @@ Beispiel:
 ```text
 OPENAI_API_KEY=your_openai_api_key_here
 OPENAI_MODEL=gpt-4o-mini
+OPENAI_BASE_URL=
 ```
 
-Aktuell wird der API-Key noch nicht verwendet.
+`OPENAI_BASE_URL` bleibt leer, wenn die normale OpenAI API verwendet wird. Fuer
+OpenAI-kompatible Anbieter kann dort eine alternative `/v1`-Base-URL eingetragen
+werden.
+
+Wenn kein API-Key gesetzt ist, startet die App trotzdem und verwendet den
+lokalen Fallback-Bericht.
 
 ## Bewertungslogik
 
@@ -178,6 +210,17 @@ Der aktuelle Score ist bewusst einfach und transparent. Punkte gibt es fuer:
 
 Diese Logik ist keine finale SEO-Bewertung. Sie dient als robuste MVP-Grundlage,
 die spaeter durch KI-Auswertung und weitere Messwerte erweitert werden kann.
+
+## KI-Auswertung und Halluzinationsschutz
+
+Die KI bekommt nicht den kompletten Website-Text, sondern nur die gemessenen
+Signale aus `WebsiteSignals`. Der System-Prompt verbietet erfundene Inhalte,
+Rechtsdetails, Lighthouse-Werte, Unterseiten und Branchenfakten. Die Antwort
+muss wieder dem Pydantic-Modell `AuditReport` entsprechen.
+
+Wenn die KI-Antwort leer ist, ungueltiges JSON enthaelt oder nicht zum Modell
+passt, wird automatisch der lokale Bericht genutzt. Dadurch bleibt die App
+robust und nachvollziehbar.
 
 ## Grenzen des aktuellen MVP
 
@@ -232,9 +275,8 @@ Status: weitgehend umgesetzt.
 
 Phase 2: bessere Portfolio-Version
 
-- OpenAI-kompatible Berichtserzeugung ergaenzen
-- System-Prompt so gestalten, dass nur gemessene Daten genutzt werden
-- strukturierte JSON-Antwort der KI mit Pydantic validieren
+- KI-Prompt weiter testen und mit Demo-Websites vergleichen
+- Beispiel-Audits fuer README/Portfolio dokumentieren
 - mobile Ansicht als zweiten Screenshot hinzufuegen
 - UI-Fehlerbehandlung verbessern
 - Beispiel-Screenshots und Demo-Workflow dokumentieren

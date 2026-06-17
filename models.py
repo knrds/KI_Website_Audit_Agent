@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 
 
 Priority = Literal["hoch", "mittel", "niedrig"]
+ReportSource = Literal["ai", "local"]
 
 
 class WebsiteSignals(BaseModel):
@@ -46,3 +47,11 @@ class AuditReport(BaseModel):
     score: int = Field(ge=0, le=100)
     key_issues: list[str] = Field(default_factory=list)
     recommendations: list[Recommendation] = Field(default_factory=list)
+
+
+class ReportGenerationResult(BaseModel):
+    """Report plus metadata about how it was generated."""
+
+    report: AuditReport
+    source: ReportSource
+    message: str | None = None

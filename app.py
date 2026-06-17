@@ -4,7 +4,7 @@ from pathlib import Path
 
 import streamlit as st
 
-from ai_report import create_local_report
+from ai_report import create_report
 from audit import run_audit
 from models import WebsiteSignals
 
@@ -18,11 +18,12 @@ st.set_page_config(
 
 def main() -> None:
     st.title("KI-gestuetzter Website-Audit-Agent")
-    st.caption("MVP: echte Website-Pruefung mit lokalem Regelbericht")
+    st.caption("MVP: echte Website-Pruefung mit optionalem KI-Bericht")
 
     with st.sidebar:
         st.header("Audit starten")
         url = st.text_input("Website-URL", placeholder="https://example.com")
+        prefer_ai = st.checkbox("KI-Bericht verwenden", value=True)
         start = st.button("Website analysieren", type="primary", use_container_width=True)
 
     if not start:
@@ -35,14 +36,22 @@ def main() -> None:
 
     with st.spinner("Website wird geladen und analysiert..."):
         signals = run_audit(url)
-        report = create_local_report(signals)
+        report_result = create_report(signals, prefer_ai=prefer_ai)
+        report = report_result.report
 
-    score_col, status_col, load_col, url_col = st.columns([1, 1, 1, 3])
+    score_col, status_col, source_col, load_col, url_col = st.columns([1, 1, 1, 1, 3])
     score_col.metric("Score", f"{report.score}/100")
     status_col.metric("Status", _status_label(signals))
+    source_col.metric("Bericht", _report_source_label(report_result.source))
     load_col.metric("Ladezeit", _load_time_label(signals))
     url_col.write("Finale URL")
     url_col.code(signals.final_url or signals.url)
+
+    if report_result.message:
+        if report_result.source == "ai":
+            st.success(report_result.message)
+        else:
+            st.info(report_result.message)
 
     st.subheader("Kurzfazit")
     st.write(report.summary)
@@ -91,6 +100,12 @@ def _load_time_label(signals: WebsiteSignals) -> str:
     if signals.load_time_ms is None:
         return "-"
     return f"{signals.load_time_ms} ms"
+
+
+def _report_source_label(source: str) -> str:
+    if source == "ai":
+        return "KI"
+    return "lokal"
 
 
 def _build_check_rows(signals: WebsiteSignals) -> list[dict[str, str]]:
