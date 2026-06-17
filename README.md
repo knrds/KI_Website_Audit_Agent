@@ -20,10 +20,12 @@ Bereits umgesetzt:
 - HTTP-Status und grobe Ladezeitmessung
 - HTML-Auswertung mit BeautifulSoup
 - Erkennung von Seitentitel, Meta Description und H1
-- einfache Heuristiken fuer Call-to-Action, Impressum, Datenschutz und Kontaktinformationen
+- strenge Heuristiken fuer Title-/Meta-Qualitaet, Content-Tiefe, lokale SEO-Signale und Conversion
+- Checks fuer starke CTAs, Adresse, Oeffnungszeiten, Trust-Signale, Bewertungen und Leistungsbegriffe
+- Checks fuer Canonical, Noindex, Open Graph, Structured Data, LocalBusiness Schema, interne Links und Bild-Alt-Texte
 - Screenshot der analysierten Website
 - Pydantic-Modelle fuer strukturierte Audit-Daten
-- lokaler regelbasierter Score von 0 bis 100
+- strenger lokaler SEO- und Conversion-Score von 0 bis 100
 - optionaler KI-Bericht ueber OpenAI API oder kompatible API
 - Validierung der KI-Antwort mit Pydantic
 - automatischer Fallback auf lokalen Bericht, wenn kein API-Key vorhanden ist
@@ -52,14 +54,14 @@ umgesetzt:
 4. Playwright-basierter Website-Aufruf
 5. Website-Daten extrahieren
 6. Basischecks fuer Titel, Meta, H1, CTA, Impressum, Datenschutz und Kontakt
-7. Streamlit-UI
+7. Streamlit-UI mit Basis-, SEO-, Local-SEO- und Conversion-Tabs
 8. KI-Bericht mit API-Key-Erkennung, Pydantic-Validierung und lokalem Fallback
 9. Fehlerbehandlung teilweise umgesetzt
 10. README und Portfolio-Dokumentation gestartet
 
 Noch offen fuer eine runde Version 1:
 
-- echten lokalen Testlauf in einer stabilen Python-Umgebung ausfuehren
+- echten lokalen Browser-Testlauf mit Beispiel-Websites ausfuehren
 - UI-Fehlertexte weiter polieren
 - optional Demo-Screenshot fuer README/Portfolio erzeugen
 - optional mobilen Screenshot ergaenzen
@@ -196,20 +198,34 @@ lokalen Fallback-Bericht.
 
 ## Bewertungslogik
 
-Der aktuelle Score ist bewusst einfach und transparent. Punkte gibt es fuer:
+Der aktuelle Score ist bewusst streng und transparent. Vorhandene Felder reichen
+nicht aus; die Signale muessen SEO und Kundengewinnung unterstuetzen.
+
+Punkte gibt es unter anderem fuer:
 
 - erreichbare Website
-- vorhandenen Seitentitel
-- vorhandene Meta Description
-- vorhandene H1
-- erkennbare Call-to-Action-Elemente
-- Impressum
-- Datenschutzerklaerung
+- Title mit passender Laenge, Leistung und lokalem Bezug
+- Meta Description mit passender Laenge, Nutzen und CTA
+- genau eine H1, H2-Struktur und ausreichende sichtbare Content-Tiefe
+- starke Anfrage-, Buchungs- oder Anruf-CTAs
 - Kontaktinformationen
+- Adresse und Oeffnungszeiten
+- lokale SEO-Signale
+- Trust-Signale wie Bewertungen, Referenzen oder Erfahrung
+- strukturierte Daten, besonders `LocalBusiness`
+- Canonical, Open Graph, mobile Viewport-Meta
+- interne Links und Bilder mit Alt-Texten
+- Impressum und Datenschutzerklaerung
 - erfolgreich gespeicherten Screenshot
 
-Diese Logik ist keine finale SEO-Bewertung. Sie dient als robuste MVP-Grundlage,
-die spaeter durch KI-Auswertung und weitere Messwerte erweitert werden kann.
+Diese Logik ist keine finale SEO-Bewertung und ersetzt kein professionelles
+Audit. Sie ist aber bewusst streng, damit die Demo nicht nur technische
+Pflichtfelder abnickt, sondern bessere Hinweise zur Kundengewinnung liefert.
+
+Die SEO-Kriterien orientieren sich an grundlegenden Google-Search-Central-Themen
+wie hilfreichen Inhalten, aussagekraeftigen Title Links, Snippets und
+Structured Data. Es gibt keine Garantie auf Rankings; Ziel ist eine bessere
+technische und inhaltliche Grundlage fuer Auffindbarkeit und Conversion.
 
 ## KI-Auswertung und Halluzinationsschutz
 
