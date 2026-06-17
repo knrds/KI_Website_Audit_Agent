@@ -141,7 +141,7 @@ Voraussetzung:
 Projekt starten:
 
 ```powershell
-cd D:\Auto_AI_Projects
+cd D:\Auto_AI_Projects\KI_Website_Audit_Agent
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
