@@ -72,7 +72,8 @@ Stellen Sie sicher, dass Python (Version 3.11 oder neuer) auf Ihrem System insta
 
 1.  **Repository klonen & in das Verzeichnis wechseln:**
     ```bash
-    cd KI_Website_Audit_Agent
+    git clone https://github.com/ihr-benutzername/website-audit-agent.git
+    cd website-audit-agent
     ```
 
 2.  **Virtuelle Umgebung erstellen und aktivieren:**
